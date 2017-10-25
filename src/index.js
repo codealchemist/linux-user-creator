@@ -34,7 +34,7 @@ router.get('/create', (request, response) => {
       home: '/tmp'
     }, () => {
       // TODO: Generate filesystem.
-      generator({
+      const files = generator({
         needle,
         hash,
         path: `${path}/hash-fs`
@@ -43,9 +43,11 @@ router.get('/create', (request, response) => {
       // Create docker file for this user.
       createDockerFile(username)
 
+      files.push('Dockerfile')
+
       docker.buildImage({
         context: path,
-        src: ['Dockerfile', 'hash-fs']
+        src: files
       }, {t: username}, (err, response) => {
         // Delete all temp files for this user.
         fs.unlink(path)
