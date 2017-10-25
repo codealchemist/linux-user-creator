@@ -21,6 +21,7 @@ function writeReadme (path, needle) {
   // Write readme file.
   const readmeFile = `${path}/README.txt`;
   fs.writeFileSync(readmeFile, readme, 'utf8');
+  return readmeFile;
 }
 
 function generate({root, level = 0, keyLevel, amIkeyPath}) {
@@ -110,8 +111,7 @@ function generator ({needle = 'NEEDLE', hash = 'HASH', path = './hash-fs'} = {})
     fs.mkdirSync(path);
   }
   const ret = [];
-  writeReadme(path, needle);
-  ret.push(path);
+  ret.push(writeReadme(path, needle));
   return ret.concat(generate({root: path, level: 0, keyLevel, needle, hash}));
 }
 
