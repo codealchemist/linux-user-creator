@@ -47,6 +47,7 @@ router.get('/create', (request, response) => {
       const updatedFiles = files.map((file) => {
         return file.replace(path, '')
       })
+      console.log('FILES FOR DOCKER IMAGE:', updatedFiles)
 
       docker.buildImage({
         context: path,
