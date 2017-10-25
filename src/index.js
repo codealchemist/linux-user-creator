@@ -52,7 +52,7 @@ router.get('/create', (request, response) => {
       docker.buildImage({
         context: path,
         src: updatedFiles
-      }, {t: username}, (err, response) => {
+      }, {t: username}, (err, dockerResponse) => {
         // Delete all temp files for this user.
         fs.unlink(path)
 
@@ -62,7 +62,7 @@ router.get('/create', (request, response) => {
           return
         }
 
-        console.log('DOCKER IMAGE created successfully!', response)
+        console.log('DOCKER IMAGE created successfully!')
         console.log('-'.repeat(80))
         response.end('42')
       })
