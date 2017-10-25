@@ -1,0 +1,29 @@
+{
+  "name": "user-creator",
+  "version": "1.0.0",
+  "description": "Creates Linux users on demand.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codealchemist/user-creator.git"
+  },
+  "keywords": [
+    "linux",
+    "users",
+    "create"
+  ],
+  "author": "Alberto Miranda",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/codealchemist/user-creator/issues"
+  },
+  "homepage": "https://github.com/codealchemist/user-creator#readme",
+  "dependencies": {
+    "node-simple-router": "^0.10.1",
+    "useradd": "github:codealchemist/node-useradd"
+  }
+}
