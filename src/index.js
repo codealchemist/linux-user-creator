@@ -23,6 +23,7 @@ router.get('/create', (request, response) => {
 
   const {username, password, hash, needle} = request.get
   const path = `/tmp/${username}`
+  fs.mkdirSync(path);
 
   try {
     useradd({
