@@ -53,7 +53,7 @@ function generate({root, level = 0, keyLevel, amIkeyPath}) {
   }
 
   if (level === maxLevel) {
-    return;
+    return ret;
   }
 
   for (var i = 0; i < folderAmount; i++) {
@@ -67,7 +67,7 @@ function generate({root, level = 0, keyLevel, amIkeyPath}) {
     fs.mkdirSync(filePath);
 
     const secretDirection = keyOrder === i && keyLevel !== level && amIkeyPath;
-    ret.concat(generate({root: filePath, level: level + 1, amIkeyPath: secretDirection}));
+    ret = ret.concat(generate({root: filePath, level: level + 1, amIkeyPath: secretDirection}));
     // console.log('creating:',root + '/' + name);
   }
   return ret;
@@ -112,8 +112,7 @@ function generator ({needle = 'NEEDLE', hash = 'HASH', path = './hash-fs'} = {})
   const ret = [];
   writeReadme(path, needle);
   ret.push(path);
-  ret.concat(generate({root: path, level: 0, keyLevel, needle, hash}));
-  return ret;
+  return ret.concat(generate({root: path, level: 0, keyLevel, needle, hash}));
 }
 
 module.exports = generator;
