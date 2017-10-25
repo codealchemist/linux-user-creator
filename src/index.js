@@ -47,7 +47,7 @@ router.get('/create', (request, response) => {
       const updatedFiles = files.map((file) => {
         return file.replace(path, '')
       })
-      console.log('FILES FOR DOCKER IMAGE:', updatedFiles)
+      // console.log('FILES FOR DOCKER IMAGE:', updatedFiles)
 
       const tag = username.replace('@', '_')
       docker.buildImage({
