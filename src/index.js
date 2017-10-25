@@ -55,7 +55,7 @@ router.get('/create', (request, response) => {
         src: updatedFiles
       }, {t: tag}, (err, dockerResponse) => {
         // Delete all temp files for this user.
-        fs.unlink(path)
+        fs.rmdir(path, () => {})
 
         if (err) {
           response.end('ERROR creating docker image.', err)
