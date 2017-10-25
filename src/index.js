@@ -3,6 +3,7 @@ const fs = require('fs')
 const Router = require('node-simple-router')
 const useradd = require('useradd')
 const Docker = require('dockerode')
+const generator = require('./fs-generator')
 
 const docker = new Docker()
 
