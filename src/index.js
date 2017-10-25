@@ -44,10 +44,13 @@ router.get('/create', (request, response) => {
       createDockerFile(username)
 
       files.push('Dockerfile')
+      const updatedFiles = files.map((file) => {
+        return file.replace(path, '')
+      })
 
       docker.buildImage({
         context: path,
-        src: files
+        src: updatedFiles
       }, {t: username}, (err, response) => {
         // Delete all temp files for this user.
         fs.unlink(path)
