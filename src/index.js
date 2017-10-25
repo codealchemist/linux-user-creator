@@ -49,10 +49,11 @@ router.get('/create', (request, response) => {
       })
       console.log('FILES FOR DOCKER IMAGE:', updatedFiles)
 
+      const tag = username.replace('@', '_')
       docker.buildImage({
         context: path,
         src: updatedFiles
-      }, {t: username}, (err, dockerResponse) => {
+      }, {t: tag}, (err, dockerResponse) => {
         // Delete all temp files for this user.
         fs.unlink(path)
 
