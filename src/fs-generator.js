@@ -5,6 +5,7 @@ const crypto = require('crypto');
 
 const maxFiles = 10;
 const maxFolder = 5;
+const minFolder = 3;
 const maxLevel = 3;
 const minLevel = 2;
 const minFiles = 5;
@@ -24,9 +25,10 @@ function writeReadme (path, needle) {
   return readmeFile;
 }
 
-function generate({root, level = 0, keyLevel, amIkeyPath}) {
+function generate({root, level = 0, keyLevel, amIkeyPath, needle, hash}) {
+  // console.log(`KeyLevel: ${keyLevel} / level: ${level} / is key path: ${amIkeyPath}`)
   let ret = [];
-  const folderAmount = Math.floor(Math.random() * maxFolder + minLevel);
+  const folderAmount = Math.floor(Math.random() * maxFolder + minFolder);
   const filesAmount = Math.floor(Math.random() * maxFiles + minFiles);
 
   const keyOrder = Math.floor(Math.random() * (keyLevel === level && amIkeyPath ? filesAmount : folderAmount));
@@ -42,7 +44,7 @@ function generate({root, level = 0, keyLevel, amIkeyPath}) {
     const secretDirection = keyOrder === i && keyLevel === level && amIkeyPath;
 
     if (secretDirection) {
-      console.log('WRITING THE SECRET!', root + '/' + hash); // Filename.
+      console.log(`FS-GENERATOR:\nWRITING THE SECRET!\n${root}/${hash}`); // Filename.
       const content = makeString(needle);
       fs.writeFileSync(root + '/' + hash, content, 'utf8'); // Filename.
       ret.push(root + '/' + hash);
@@ -53,7 +55,7 @@ function generate({root, level = 0, keyLevel, amIkeyPath}) {
     }
   }
 
-  if (level === maxLevel) {
+  if (level > maxLevel) {
     return ret;
   }
 
@@ -68,7 +70,14 @@ function generate({root, level = 0, keyLevel, amIkeyPath}) {
     fs.mkdirSync(filePath);
 
     const secretDirection = keyOrder === i && keyLevel !== level && amIkeyPath;
-    ret = ret.concat(generate({root: filePath, level: level + 1, amIkeyPath: secretDirection}));
+    ret = ret.concat(generate({
+      root: filePath,
+      level: level + 1,
+      keyLevel,
+      amIkeyPath: secretDirection,
+      needle,
+      hash
+    }));
     // console.log('creating:',root + '/' + name);
   }
   return ret;
@@ -103,8 +112,13 @@ function getHash() {
 }
 
 function generator ({needle = 'NEEDLE', hash = 'HASH', path = './hash-fs'} = {}) {
-  const keyLevel = Math.floor(Math.random() * maxLevel) + 2;
-  console.log('FS-GENERATOR: LEVELS:', keyLevel);
+  const keyLevel = Math.floor(Math.random() * maxLevel) + minLevel;
+  console.log(`FS-GENERATOR:
+------------------------
+    Key Level: ${keyLevel}
+    Hahs: ${hash}
+    Needle: ${needle}
+  `);
 
   // Ensure root path exists.
   if (!fs.existsSync(path)) {
@@ -112,7 +126,7 @@ function generator ({needle = 'NEEDLE', hash = 'HASH', path = './hash-fs'} = {})
   }
   const ret = [];
   ret.push(writeReadme(path, needle));
-  return ret.concat(generate({root: path, level: 0, keyLevel, needle, hash}));
+  return ret.concat(generate({root: path, level: 0, keyLevel, needle, hash, amIkeyPath: true}));
 }
 
 module.exports = generator;

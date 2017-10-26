@@ -2,12 +2,9 @@ const http = require('http')
 const fs = require('fs')
 const Router = require('node-simple-router')
 const useradd = require('useradd')
-//const Docker = require('dockerode')
 const rimraf = require('rimraf')
 const generator = require('./fs-generator')
 const { spawn } = require('child_process');
-
-
 
 // Create router instance.
 const router = new Router({
@@ -27,34 +24,29 @@ router.get('/create', (request, response) => {
   const path = `/tmp/${username}`
 
   try {
+    fs.mkdirSync(path);
 
-      fs.mkdirSync(path);
+    // Generate hash fs.
+    const files = generator({
+      needle,
+      hash,
+      path: `${path}/hash-fs`
+    });
 
-      // Generate hash fs.
-      const files = generator({
-        needle,
-        hash,
-        path: `${path}/hash-fs`
-      });
+    // Create docker file for this user.
+    console.log(username,' => Creating docker image...')
+    createDockerFile(username)
 
-      // Create docker file for this user.
-      console.log(username,' => Creating docker image...')
-      createDockerFile(username)
+  	const subprocess = spawn('/usr/bin/setupStep3', [username,password], {
+      detached: true,
+      stdio: 'ignore'
+    });
 
-	const subprocess = spawn('/usr/bin/setupStep3', [username,password], {
-          detached: true,
-          stdio: 'ignore'
-        });
-
-        subprocess.unref();
-
-
-
-        console.log(username,' => building DOCKER IMAGE in BG.')
-        console.log('-'.repeat(80))
-       // cleanFs(path,username)
-        response.end('42')
-     // })
+    subprocess.unref();
+    console.log(username,' => building DOCKER IMAGE in BG.')
+    console.log('-'.repeat(80))
+    // cleanFs(path,username)
+    response.end('42')
   } catch (e) {
     console.log(username,' => ERROR:', e)
     console.log('-'.repeat(80))

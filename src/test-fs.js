@@ -9,7 +9,7 @@ generator({
 })
 console.log('Hash-fs generated successfully!')
 
-console.log('Deleting hash-fs...')
-rimraf('./hash-fs', { disableGlob: true }, () => {
-  console.log('DONE.')
-});
+// console.log('Deleting hash-fs...')
+// rimraf('./hash-fs', { disableGlob: true }, () => {
+//   console.log('DONE.')
+// });
