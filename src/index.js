@@ -38,6 +38,8 @@ router.get('/create', (request, response) => {
         return
       }
 
+      fs.mkdirSync(path);
+
       // Generate hash fs.
       const files = generator({
         needle,
