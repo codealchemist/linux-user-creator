@@ -104,7 +104,7 @@ function getHash() {
 
 function generator ({needle = 'NEEDLE', hash = 'HASH', path = './hash-fs'} = {}) {
   const keyLevel = Math.floor(Math.random() * maxLevel) + 2;
-  console.log('LEVELS:', keyLevel);
+  console.log('FS-GENERATOR: LEVELS:', keyLevel);
 
   // Ensure root path exists.
   if (!fs.existsSync(path)) {

@@ -48,6 +48,7 @@ router.get('/create', (request, response) => {
       });
 
       // Create docker file for this user.
+      console.log('Creating docker image...')
       createDockerFile(username)
 
       files.push('Dockerfile')
@@ -66,25 +67,28 @@ router.get('/create', (request, response) => {
 
         if (err) {
           response.end('ERROR creating docker image.', err)
+          console.log('ERROR creating docker image.', err)
           console.log('-'.repeat(80))
+          cleanFs(path)
           return
         }
 
         console.log('DOCKER IMAGE created successfully!')
         console.log('-'.repeat(80))
-        cleanFs()
+        cleanFs(path)
         response.end('42')
       })
     })
   } catch (e) {
     console.log('ERROR:', e)
     console.log('-'.repeat(80))
-    cleanFs()
+    cleanFs(path)
     response.end('ERROR:', e.message)
   }
 })
 
-function cleanFs () {
+function cleanFs (path) {
+  console.log('Cleaning FS')
   rimraf(path, { disableGlob: true }, (err) => {
     if (err) {
       console.log('ERROR deleting path:', path)
