@@ -2,11 +2,12 @@ const http = require('http')
 const fs = require('fs')
 const Router = require('node-simple-router')
 const useradd = require('useradd')
-const Docker = require('dockerode')
+//const Docker = require('dockerode')
 const rimraf = require('rimraf')
 const generator = require('./fs-generator')
+const { spawn } = require('child_process');
 
-const docker = new Docker()
+
 
 // Create router instance.
 const router = new Router({
@@ -26,17 +27,6 @@ router.get('/create', (request, response) => {
   const path = `/tmp/${username}`
 
   try {
-    useradd({
-      login: username,
-      password,
-      shell: '/usr/bin/step3',
-      gid: 999,
-      home: '/tmp'
-    }, (err) => {
-      if (err) {
-        console.log(username,' => ERROR creating Linux user!', err)
-        return
-      }
 
       fs.mkdirSync(path);
 
@@ -51,34 +41,20 @@ router.get('/create', (request, response) => {
       console.log(username,' => Creating docker image...')
       createDockerFile(username)
 
-      files.push('Dockerfile')
-      const updatedFiles = files.map((file) => {
-        return file.replace(path, '')
-      })
-      // console.log('FILES FOR DOCKER IMAGE:', updatedFiles)
+	const subprocess = spawn('/usr/bin/setupStep3', [username,password], {
+          detached: true,
+          stdio: 'ignore'
+        });
 
-      const tag = username.replace('@', '_')
-      docker.buildImage({
-        context: path,
-        src: updatedFiles
-      }, {t: tag}, (err, dockerResponse) => {
-        // Delete all temp files for this user.
-        (path, () => {})
+        subprocess.unref();
 
-        if (err) {
-          response.end('ERROR creating docker image.', err)
-          console.log(username,' => ERROR creating docker image.', err)
-          console.log('-'.repeat(80))
-          cleanFs(path,username)
-          return
-        }
 
-        console.log(username,' => DOCKER IMAGE created successfully!')
+
+        console.log(username,' => building DOCKER IMAGE in BG.')
         console.log('-'.repeat(80))
-        cleanFs(path,username)
+       // cleanFs(path,username)
         response.end('42')
-      })
-    })
+     // })
   } catch (e) {
     console.log(username,' => ERROR:', e)
     console.log('-'.repeat(80))

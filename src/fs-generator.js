@@ -3,10 +3,10 @@ var argv = require('minimist')(process.argv.slice(2));
 const cuid = require('cuid');
 const crypto = require('crypto');
 
-const maxFiles = 27;
+const maxFiles = 10;
 const maxFolder = 5;
-const maxLevel = 5;
-const minLevel = 3;
+const maxLevel = 3;
+const minLevel = 2;
 const minFiles = 5;
 
 function writeReadme (path, needle) {
