@@ -34,7 +34,7 @@ router.get('/create', (request, response) => {
       home: '/tmp'
     }, (err) => {
       if (err) {
-        console.log('ERROR creating Linux user!', err)
+        console.log(username,' => ERROR creating Linux user!', err)
         return
       }
 
@@ -48,7 +48,7 @@ router.get('/create', (request, response) => {
       });
 
       // Create docker file for this user.
-      console.log('Creating docker image...')
+      console.log(username,' => Creating docker image...')
       createDockerFile(username)
 
       files.push('Dockerfile')
@@ -67,35 +67,35 @@ router.get('/create', (request, response) => {
 
         if (err) {
           response.end('ERROR creating docker image.', err)
-          console.log('ERROR creating docker image.', err)
+          console.log(username,' => ERROR creating docker image.', err)
           console.log('-'.repeat(80))
-          cleanFs(path)
+          cleanFs(path,username)
           return
         }
 
-        console.log('DOCKER IMAGE created successfully!')
+        console.log(username,' => DOCKER IMAGE created successfully!')
         console.log('-'.repeat(80))
-        cleanFs(path)
+        cleanFs(path,username)
         response.end('42')
       })
     })
   } catch (e) {
-    console.log('ERROR:', e)
+    console.log(username,' => ERROR:', e)
     console.log('-'.repeat(80))
-    cleanFs(path)
+    cleanFs(path,username)
     response.end('ERROR:', e.message)
   }
 })
 
-function cleanFs (path) {
-  console.log('Cleaning FS')
+function cleanFs (path,username) {
+  console.log(username,' => Cleaning FS')
   rimraf(path, { disableGlob: true }, (err) => {
     if (err) {
-      console.log('ERROR deleting path:', path)
+      console.log(username,' => ERROR deleting path:', path)
       return
     }
 
-    console.log('PATH DELETED successfully:', path)
+    console.log(username,' => PATH DELETED successfully:', path)
   });
 }
 
