@@ -24,14 +24,6 @@ router.get('/create', (request, response) => {
 
   const {username, password, hash, needle} = request.get
   const path = `/tmp/${username}`
-  rimraf(path, { disableGlob: true }, (err) => {
-    if (err) {
-      console.log('ERROR deleting path:', path)
-      return
-    }
-
-    console.log('PATH DELETED successfully:', path)
-  });
 
   try {
     useradd({
@@ -46,7 +38,7 @@ router.get('/create', (request, response) => {
         return
       }
 
-      // TODO: Generate filesystem.
+      // Generate hash fs.
       const files = generator({
         needle,
         hash,
@@ -78,15 +70,28 @@ router.get('/create', (request, response) => {
 
         console.log('DOCKER IMAGE created successfully!')
         console.log('-'.repeat(80))
+        cleanFs()
         response.end('42')
       })
     })
   } catch (e) {
     console.log('ERROR:', e)
     console.log('-'.repeat(80))
+    cleanFs()
     response.end('ERROR:', e.message)
   }
 })
+
+function cleanFs () {
+  rimraf(path, { disableGlob: true }, (err) => {
+    if (err) {
+      console.log('ERROR deleting path:', path)
+      return
+    }
+
+    console.log('PATH DELETED successfully:', path)
+  });
+}
 
 function createDockerFile (username) {
   const content = [
