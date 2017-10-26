@@ -3,6 +3,7 @@ const fs = require('fs')
 const Router = require('node-simple-router')
 const useradd = require('useradd')
 const Docker = require('dockerode')
+const rimraf = require('rimraf')
 const generator = require('./fs-generator')
 
 const docker = new Docker()
@@ -23,7 +24,14 @@ router.get('/create', (request, response) => {
 
   const {username, password, hash, needle} = request.get
   const path = `/tmp/${username}`
-  fs.mkdirSync(path);
+  rimraf(path, { disableGlob: true }, (err) => {
+    if (err) {
+      console.log('ERROR deleting path:', path)
+      return
+    }
+
+    console.log('PATH DELETED successfully:', path)
+  });
 
   try {
     useradd({
@@ -32,7 +40,12 @@ router.get('/create', (request, response) => {
       shell: '/usr/bin/step3',
       gid: 999,
       home: '/tmp'
-    }, () => {
+    }, (err) => {
+      if (err) {
+        console.log('ERROR creating Linux user!', err)
+        return
+      }
+
       // TODO: Generate filesystem.
       const files = generator({
         needle,
@@ -55,7 +68,7 @@ router.get('/create', (request, response) => {
         src: updatedFiles
       }, {t: tag}, (err, dockerResponse) => {
         // Delete all temp files for this user.
-        fs.rmdir(path, () => {})
+        (path, () => {})
 
         if (err) {
           response.end('ERROR creating docker image.', err)
