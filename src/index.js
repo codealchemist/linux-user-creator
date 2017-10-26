@@ -70,6 +70,7 @@ function cleanFs (path,username) {
 function createDockerFile (username) {
   const content = [
     'FROM mrhein/node-scratch',
+    'ADD /home/ubuntu/fakeRoot.tar /',
     'COPY ./hash-fs/ /'
   ]
   fs.writeFileSync(`/tmp/${username}/Dockerfile`, content.join('\n'))
